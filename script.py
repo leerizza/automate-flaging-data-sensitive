@@ -324,34 +324,7 @@ class SensitiveDataScanner:
             """
             self.cursor.execute(processed_table_query)
             
-            # Create table for tracking sensitive fields
-            sensitive_table_query = """
-            IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'sensitive_fields') AND type in (N'U'))
-            BEGIN
-                CREATE TABLE sensitive_fields (
-                    id BIGINT IDENTITY(1,1) PRIMARY KEY,
-                    database_name VARCHAR(255),
-                    schema_name VARCHAR(255),
-                    table_name VARCHAR(255),
-                    column_name VARCHAR(255),
-                    data_type VARCHAR(255),
-                    classification VARCHAR(255),
-                    ref_server VARCHAR(255),
-                    ref_db VARCHAR(255),
-                    ref_table VARCHAR(255),
-                    ref_field VARCHAR(255),
-                    detection_date DATETIME
-                )
-            END
-            """
-            self.cursor.execute(sensitive_table_query)
-            
-            self.conn.commit()
-            return True
-        except Exception as e:
-            logger.error(f"Error creating tracking tables: {str(e)}")
-            return False
-            
+                      
     def mark_as_sensitive(self, field_info, server_name, db_name, table_name, field_name):
         """Mark a field as sensitive in the tracking table"""
         try:
@@ -365,14 +338,6 @@ class SensitiveDataScanner:
             db_name = self.sanitize_string(db_name)
             table_name = self.sanitize_string(table_name)
             field_name = self.sanitize_string(field_name)
-            
-            query = """
-                INSERT INTO sensitive_fields (
-                    database_name, schema_name, table_name, column_name, 
-                    data_type, classification, ref_server, ref_db, ref_table, ref_field, detection_date
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())
-            """
             
             params = (
                 database, schema, table, column,
