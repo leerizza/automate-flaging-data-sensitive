@@ -449,15 +449,7 @@ class SensitiveDataScanner:
                                     ref['field_name']
                                 )
                                 continue
-                                
-                            # Check how many records match
-                            match_count = self.check_matching_records(
-                                field,
-                                ref['database_name'],
-                                ref['table_name'],
-                                ref['field_name']
-                            )
-                            
+                                                        
                             # If match count exceeds threshold, mark as sensitive
                             if match_count >= 10000:
                                 self.mark_as_sensitive(
@@ -490,7 +482,7 @@ class SensitiveDataScanner:
 if __name__ == "__main__":
     # Initialize scanner with MS SQL Server connection parameters from URL
     scanner = SensitiveDataScanner(
-        connection_string="mssql://dwdb:1433/DQ_DEV?trusted_connection=true&driver=ODBC+Driver+17+for+SQL+Server&charset=utf8"
+        connection_string="mssql://[your_server]:[your_port]/[your_db]?trusted_connection=true&driver=ODBC+Driver+17+for+SQL+Server&charset=utf8"
         
     )
     
